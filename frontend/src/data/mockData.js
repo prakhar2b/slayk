@@ -12,7 +12,7 @@ export const categories = [
     id: 2,
     name: "Curtains",
     slug: "curtains",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&h=400&fit=crop",
     count: 189
   },
   {
@@ -47,7 +47,7 @@ export const categories = [
     id: 7,
     name: "Lighting",
     slug: "lighting",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400&h=400&fit=crop",
     count: 167
   },
   {
