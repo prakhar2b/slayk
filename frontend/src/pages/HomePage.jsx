@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Truck, RotateCcw, Shield, Award, Star, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import HeroCarousel from '../components/HeroCarousel';
+import HeroBanner from '../components/HeroBanner';
 import ProductCard from '../components/ProductCard';
 import { categories, products, testimonials, collections, trustBadges } from '../data/mockData';
 import { Button } from '../components/ui/button';
