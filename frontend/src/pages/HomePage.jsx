@@ -32,8 +32,8 @@ const HomePage = () => {
     <div className="min-h-screen bg-white">
       <Header />
       
-      {/* Hero Carousel */}
-      <HeroCarousel />
+      {/* Hero Banner */}
+      <HeroBanner />
 
       {/* Trust Badges */}
       <section className="bg-[#FDF8F3] py-6 border-b">
