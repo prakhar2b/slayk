@@ -1,16 +1,10 @@
 from fastapi import APIRouter, Depends
 from models import DashboardStats, Order
 from auth import require_admin
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
+from database import db
 from datetime import datetime
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
-
-# Get database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
 
 def deserialize_order(order: dict) -> dict:
     if 'created_at' in order and isinstance(order['created_at'], str):
@@ -59,7 +53,7 @@ async def get_inventory_status(admin: dict = Depends(require_admin)):
     # Get all products with stock info
     products = await db.products.find(
         {},
-        {"_id": 0, "id": 1, "name": 1, "slug": 1, "category": 1, "stock_quantity": 1, "in_stock": 1, "image": 1}
+        {"_id": 0, "id": 1, "name": 1, "slug": 1, "category": 1, "stock_quantity": 1, "in_stock": 1, "image": 1, "price": 1}
     ).sort("stock_quantity", 1).to_list(500)
     
     # Categorize

@@ -1,17 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Query
 from models import Product, ProductCreate, ProductUpdate
 from auth import require_admin
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
+from database import db
 from datetime import datetime, timezone
 from typing import List, Optional
 
 router = APIRouter(prefix="/products", tags=["Products"])
-
-# Get database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
 
 def serialize_product(product: dict) -> dict:
     """Convert datetime objects to ISO strings for JSON serialization"""

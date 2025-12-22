@@ -1,17 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
 from models import Category, CategoryCreate
 from auth import require_admin
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
+from database import db
 import uuid
 from typing import List
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
-
-# Get database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
 
 @router.get("", response_model=List[Category])
 async def get_categories():

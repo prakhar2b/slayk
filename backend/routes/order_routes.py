@@ -1,17 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Query
 from models import Order, OrderCreate, OrderUpdate
 from auth import require_admin, get_current_user
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
+from database import db
 from datetime import datetime, timezone
 from typing import List, Optional
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
-
-# Get database connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
 
 def serialize_order(order: dict) -> dict:
     if 'created_at' in order and isinstance(order['created_at'], datetime):
