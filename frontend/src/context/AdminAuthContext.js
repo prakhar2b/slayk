@@ -19,15 +19,6 @@ export const AdminAuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('admin_token'));
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
-
   const fetchUser = async () => {
     try {
       const response = await axios.get(`${API}/auth/me`);
@@ -40,18 +31,18 @@ export const AdminAuthProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
   const login = async (email, password) => {
     const response = await axios.post(`${API}/auth/login`, { email, password });
-    const { access_token, user: userData } = response.data;
-    localStorage.setItem('admin_token', access_token);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-    setToken(access_token);
-    setUser(userData);
-    return userData;
-  };
-
-  const register = async (name, email, password) => {
-    const response = await axios.post(`${API}/auth/register`, { name, email, password });
     const { access_token, user: userData } = response.data;
     localStorage.setItem('admin_token', access_token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
@@ -73,7 +64,6 @@ export const AdminAuthProvider = ({ children }) => {
       token,
       loading,
       login,
-      register,
       logout,
       isAuthenticated: !!user
     }}>
