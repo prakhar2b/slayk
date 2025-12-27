@@ -1,8 +1,7 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
-import { AdminAuthProvider, useAdminAuth } from "./context/AdminAuthContext";
 
 // Customer pages
 import HomePage from "./pages/HomePage";
@@ -13,55 +12,12 @@ import SearchPage from "./pages/SearchPage";
 import AccountPage from "./pages/AccountPage";
 import CheckoutPage from "./pages/CheckoutPage";
 
-// Admin pages
-import AdminLogin from "./pages/admin/AdminLogin";
+// Admin pages (no auth required)
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminInventory from "./pages/admin/AdminInventory";
 import AdminOrders from "./pages/admin/AdminOrders";
-
-// Protected Route component
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAdminAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C4704B]"></div>
-      </div>
-    );
-  }
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
-  }
-  
-  return children;
-};
-
-// Admin Route wrapper
-const AdminRoutes = () => {
-  return (
-    <AdminAuthProvider>
-      <Routes>
-        <Route path="login" element={<AdminLogin />} />
-        <Route path="dashboard" element={
-          <ProtectedRoute><AdminDashboard /></ProtectedRoute>
-        } />
-        <Route path="products" element={
-          <ProtectedRoute><AdminProducts /></ProtectedRoute>
-        } />
-        <Route path="inventory" element={
-          <ProtectedRoute><AdminInventory /></ProtectedRoute>
-        } />
-        <Route path="orders" element={
-          <ProtectedRoute><AdminOrders /></ProtectedRoute>
-        } />
-        <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
-      </Routes>
-    </AdminAuthProvider>
-  );
-};
+import AdminSettings from "./pages/admin/AdminSettings";
 
 function App() {
   return (
@@ -81,8 +37,13 @@ function App() {
             <Route path="/best-sellers" element={<CategoryPage />} />
             <Route path="/collection/:slug" element={<CategoryPage />} />
             
-            {/* Admin Routes */}
-            <Route path="/admin/*" element={<AdminRoutes />} />
+            {/* Admin Routes (no auth) */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/inventory" element={<AdminInventory />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
           </Routes>
         </BrowserRouter>
       </div>
