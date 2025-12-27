@@ -1,6 +1,5 @@
-from fastapi import APIRouter, HTTPException, status, Depends, Query
+from fastapi import APIRouter, HTTPException, status, Query
 from models import Product, ProductCreate, ProductUpdate
-from auth import require_admin
 from database import db
 from datetime import datetime, timezone
 from typing import List, Optional
@@ -8,7 +7,6 @@ from typing import List, Optional
 router = APIRouter(prefix="/products", tags=["Products"])
 
 def serialize_product(product: dict) -> dict:
-    """Convert datetime objects to ISO strings for JSON serialization"""
     if 'created_at' in product and isinstance(product['created_at'], datetime):
         product['created_at'] = product['created_at'].isoformat()
     if 'updated_at' in product and isinstance(product['updated_at'], datetime):
@@ -16,7 +14,6 @@ def serialize_product(product: dict) -> dict:
     return product
 
 def deserialize_product(product: dict) -> dict:
-    """Convert ISO strings back to datetime objects"""
     if 'created_at' in product and isinstance(product['created_at'], str):
         product['created_at'] = datetime.fromisoformat(product['created_at'])
     if 'updated_at' in product and isinstance(product['updated_at'], str):
@@ -57,8 +54,7 @@ async def get_product_by_slug(slug: str):
     return deserialize_product(product)
 
 @router.post("", response_model=Product)
-async def create_product(product_data: ProductCreate, admin: dict = Depends(require_admin)):
-    # Check if slug already exists
+async def create_product(product_data: ProductCreate):
     existing = await db.products.find_one({"slug": product_data.slug})
     if existing:
         raise HTTPException(
@@ -71,7 +67,6 @@ async def create_product(product_data: ProductCreate, admin: dict = Depends(requ
     
     await db.products.insert_one(product_dict)
     
-    # Update category count
     await db.categories.update_one(
         {"slug": product.category},
         {"$inc": {"count": 1}}
@@ -80,7 +75,7 @@ async def create_product(product_data: ProductCreate, admin: dict = Depends(requ
     return product
 
 @router.put("/{product_id}", response_model=Product)
-async def update_product(product_id: str, product_data: ProductUpdate, admin: dict = Depends(require_admin)):
+async def update_product(product_id: str, product_data: ProductUpdate):
     existing = await db.products.find_one({"id": product_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -97,12 +92,11 @@ async def update_product(product_id: str, product_data: ProductUpdate, admin: di
     return deserialize_product(updated)
 
 @router.delete("/{product_id}")
-async def delete_product(product_id: str, admin: dict = Depends(require_admin)):
+async def delete_product(product_id: str):
     existing = await db.products.find_one({"id": product_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    # Update category count
     await db.categories.update_one(
         {"slug": existing['category']},
         {"$inc": {"count": -1}}
@@ -112,7 +106,7 @@ async def delete_product(product_id: str, admin: dict = Depends(require_admin)):
     return {"message": "Product deleted successfully"}
 
 @router.patch("/{product_id}/stock")
-async def update_stock(product_id: str, stock_quantity: int, admin: dict = Depends(require_admin)):
+async def update_stock(product_id: str, stock_quantity: int):
     existing = await db.products.find_one({"id": product_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
