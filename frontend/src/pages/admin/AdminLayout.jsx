@@ -1,36 +1,29 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAdminAuth } from '../../context/AdminAuthContext';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
   ShoppingCart, 
-  BarChart3, 
-  LogOut,
+  BarChart3,
+  Settings,
   Menu,
   X,
   ChevronRight
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
-  const { user, logout } = useAdminAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login');
-  };
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
     { icon: Package, label: 'Products', path: '/admin/products' },
     { icon: BarChart3, label: 'Inventory', path: '/admin/inventory' },
     { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
+    { icon: Settings, label: 'Settings', path: '/admin/settings' },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path || (path === '/admin/dashboard' && location.pathname === '/admin');
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -80,22 +73,15 @@ const AdminLayout = ({ children }) => {
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
-          <div className="flex items-center gap-3 px-4 py-2 mb-2">
+          <div className="flex items-center gap-3 px-4 py-2">
             <div className="w-10 h-10 bg-[#C4704B] rounded-full flex items-center justify-center text-white font-semibold">
-              {user?.name?.charAt(0) || 'A'}
+              A
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.name || 'Admin'}</p>
-              <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+              <p className="text-sm font-medium">Admin</p>
+              <p className="text-xs text-gray-400">Store Manager</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors"
-          >
-            <LogOut size={20} />
-            <span>Logout</span>
-          </button>
         </div>
       </aside>
 
@@ -112,7 +98,7 @@ const AdminLayout = ({ children }) => {
             </button>
             <div className="flex-1 lg:flex-none">
               <h2 className="text-lg font-semibold text-[#2D2D2D] capitalize">
-                {location.pathname.split('/').pop()}
+                {location.pathname.split('/').pop() || 'Dashboard'}
               </h2>
             </div>
             <Link 
