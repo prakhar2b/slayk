@@ -1,6 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from models import Category, CategoryCreate
-from auth import require_admin
 from database import db
 import uuid
 from typing import List
@@ -13,7 +12,7 @@ async def get_categories():
     return categories
 
 @router.post("", response_model=Category)
-async def create_category(category_data: CategoryCreate, admin: dict = Depends(require_admin)):
+async def create_category(category_data: CategoryCreate):
     existing = await db.categories.find_one({"slug": category_data.slug})
     if existing:
         raise HTTPException(status_code=400, detail="Category with this slug already exists")
@@ -30,7 +29,7 @@ async def create_category(category_data: CategoryCreate, admin: dict = Depends(r
     return category
 
 @router.delete("/{category_id}")
-async def delete_category(category_id: str, admin: dict = Depends(require_admin)):
+async def delete_category(category_id: str):
     existing = await db.categories.find_one({"id": category_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Category not found")
