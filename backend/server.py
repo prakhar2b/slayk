@@ -11,11 +11,11 @@ import uuid
 from datetime import datetime, timezone
 
 # Import routes
-from routes.auth_routes import router as auth_router
 from routes.product_routes import router as product_router
 from routes.order_routes import router as order_router
 from routes.dashboard_routes import router as dashboard_router
 from routes.category_routes import router as category_router
+from routes.settings_routes import router as settings_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -69,11 +69,11 @@ async def get_status_checks():
     return status_checks
 
 # Include all routers
-api_router.include_router(auth_router)
 api_router.include_router(product_router)
 api_router.include_router(order_router)
 api_router.include_router(dashboard_router)
 api_router.include_router(category_router)
+api_router.include_router(settings_router)
 
 # Include the main router in the app
 app.include_router(api_router)
@@ -81,7 +81,7 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
