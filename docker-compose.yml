@@ -30,7 +30,7 @@ services:
       mongodb:
         condition: service_healthy
     networks:
-      - slayk-network
+      - dryfruto-network
 
   # Nginx - Serves frontend and proxies API
   nginx:
@@ -46,7 +46,7 @@ services:
     depends_on:
       - backend
     networks:
-      - slayk-network
+      - dryfruto-network
 
 volumes:
   mongodb_data:
